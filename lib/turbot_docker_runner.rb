@@ -66,7 +66,6 @@ class TurbotDockerRunner
   end
 
   def set_up
-    #  connect_to_rabbitmq
     set_up_directory(data_path)
     set_up_directory(output_path)
     set_up_directory(downloads_path)
@@ -100,29 +99,18 @@ class TurbotDockerRunner
   def synchronise_repo
     tries = 3
 
-    if Dir.exists?(repo_path)
-      begin
-        LOG.info("Pulling into #{repo_path}")
-        Git.open(repo_path).pull
-      rescue Git::GitExecuteError
-        LOG.info('Hit GitExecuteError')
-        retry unless (tries -= 1).zero?
-      end
-    else
-      begin
-        LOG.info("Cloning #{git_url} into #{repo_path}")
-        Git.clone(git_url, repo_path)
-      rescue Git::GitExecuteError
-        LOG.info('Hit GitExecuteError')
-        retry unless (tries -= 1).zero?
-      end
-
-      # Bots using OpencBot's incrementors expect to be able to write to /repo/db.
-      # This could be removed if OpencBot is made smarter.
-      FileUtils.mkdir_p repo_path
-      FileUtils.chmod 0777, repo_path
-      File.symlink(data_path, File.join(repo_path, 'db'))
+    FileUtils.rm_rf repo_path
+    begin
+      LOG.info("Cloning #{git_url} into #{repo_path}")
+      Git.clone(git_url, repo_path)
+    rescue Git::GitExecuteError
+      LOG.info('Hit GitExecuteError')
+      retry unless (tries -= 1).zero?
     end
+
+    FileUtils.mkdir_p repo_path
+    FileUtils.chmod 0777, repo_path
+    File.symlink(data_path, File.join(repo_path, 'db'))
   end
 
   def clear_saved_vars
@@ -385,7 +373,7 @@ class TurbotDockerRunner
   end
 
   def git_url
-    "git@#{ENV['GITHOST_DOMAIN']}:#{ENV['GITHOST_GROUP']}/#{@bot_name}.git"
+    "https://#{ENV['GITHOST_DOMAIN']}/#{ENV['GITHOST_GROUP']}/#{@bot_name}"
   end
 
   def base_path
