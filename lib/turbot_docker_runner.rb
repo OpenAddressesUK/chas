@@ -3,12 +3,18 @@ require 'docker'
 require 'git'
 require 'active_support/core_ext'
 require 'dotenv'
+require 'logger'
 
 Dotenv.load
 
 class TurbotDockerRunner
 
   @queue = :turbot_docker_runs
+
+  FileUtils.mkdir_p 'log'
+  FileUtils.touch 'log/monitor.log'
+  LOG = Logger.new('log/monitor.log')
+  LOG.level = Logger::INFO
 
   def self.perform(params)
     runner = TurbotDockerRunner.new(params)
@@ -81,12 +87,12 @@ class TurbotDockerRunner
 
   def connect_to_rabbitmq
     return if Hutch.connected?
-    #Rails.logger.info('Connecting to RabbitMQ')
+    LOG.info('Connecting to RabbitMQ')
     Hutch.connect({}, HutchConfig)
   end
 
   def set_up_directory(path)
-    #Rails.logger.info("Setting up #{path}")
+    LOG.info("Setting up #{path}")
     FileUtils.mkdir_p(path)
     FileUtils.chmod(0777, path)
   end
@@ -96,18 +102,18 @@ class TurbotDockerRunner
 
     if Dir.exists?(repo_path)
       begin
-        #Rails.logger.info("Pulling into #{repo_path}")
+        LOG.info("Pulling into #{repo_path}")
         Git.open(repo_path).pull
       rescue Git::GitExecuteError
-        #Rails.logger.info('Hit GitExecuteError')
+        LOG.info('Hit GitExecuteError')
         retry unless (tries -= 1).zero?
       end
     else
       begin
-        #Rails.logger.info("Cloning #{git_url} into #{repo_path}")
+        LOG.info("Cloning #{git_url} into #{repo_path}")
         Git.clone(git_url, repo_path)
       rescue Git::GitExecuteError
-        #Rails.logger.info('Hit GitExecuteError')
+        LOG.info('Hit GitExecuteError')
         retry unless (tries -= 1).zero?
       end
 
@@ -135,7 +141,7 @@ class TurbotDockerRunner
         "#{output_path}:/output"
       ]
 
-      #Rails.logger.info("Starting container with bindings: #{binds}")
+      LOG.info("Starting container with bindings: #{binds}")
       container.start('Binds' => binds)
 
       container.attach do |stream, chunk|
@@ -154,22 +160,22 @@ class TurbotDockerRunner
       begin
         container.kill
       rescue Excon::Errors::SocketError => e
-        #Rails.logger.info("Could not kill container")
+        LOG.info("Could not kill container")
       end
     ensure
-      #Rails.logger.info('Waiting for container to finish')
+      LOG.info('Waiting for container to finish')
       response = container.wait
       status_code = response['StatusCode']
-      #Rails.logger.info('Deleting container')
+      LOG.info('Deleting container')
       container.delete
     end
 
-    #Rails.logger.info("Returning with status_code #{status_code}")
+    LOG.info("Returning with status_code #{status_code}")
     status_code
   end
 
   def create_container
-    #Rails.logger.info('Creating container')
+    LOG.info('Creating container')
     conn = Docker::Connection.new(Docker.default_socket_url, read_timeout: 24.hours)
     container_params = {
       'name' => "#{@bot_name}_#{@run_uid}",
@@ -184,12 +190,12 @@ class TurbotDockerRunner
       # running in production.
       'Env' => ["RUN_TYPE=#{@run_type}", "MORPH_URL=#{ENV['MORPH_URL']}"],
     }
-    #Rails.logger.info("Creating container with params #{container_params}")
+    LOG.info("Creating container with params #{container_params}")
     Docker::Container.create(container_params, conn)
   end
 
   def process_output
-    #Rails.logger.info('Processing output')
+    LOG.info('Processing output')
     handler = Handler.new(@bot_name, config, @run_id)
     runner = TurbotRunner::Runner.new(
     repo_path,
@@ -322,7 +328,7 @@ class TurbotDockerRunner
       :run_ended => @run_ended
     }
 
-    #Rails.logger.info("Reporting run ended to #{url}")
+    LOG.info("Reporting run ended to #{url}")
     RestClient.put(url, params.to_json, :content_type => 'application/json')
   end
 
@@ -391,8 +397,8 @@ class TurbotDockerRunner
   end
 
   def log_exception_and_notify_airbrake(e)
-    #Rails.logger.error("Hit error when running container: #{e}")
-    #e.backtrace.each { |line| #Rails.logger.error(line) }
+    LOG.error("Hit error when running container: #{e}")
+    #e.backtrace.each { |line| LOG.error(line) }
     #    Airbrake.notify(e, :parameters => @params)
   end
 
