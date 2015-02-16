@@ -392,7 +392,7 @@ class TurbotDockerRunner
     if ENV['RACK_ENV'] == "test"
       '/tmp/data/'
     else
-      '/data/'
+      ENV['CHAS_BASE_PATH']
     end
   end
 
