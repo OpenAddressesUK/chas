@@ -7,6 +7,7 @@ require 'active_support/core_ext'
 require 'dotenv'
 require 'logger'
 require 'handler'
+require 'rest-client'
 
 Dotenv.load
 

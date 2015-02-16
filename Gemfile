@@ -12,6 +12,7 @@ gem 'git'
 gem 'activesupport'
 gem 'foreman'
 gem 'turbot-runner', '0.1.18'
+gem 'rest-client'
 
 group :test do
   gem 'cucumber'
