@@ -11,6 +11,7 @@ gem 'docker-api'
 gem 'git'
 gem 'activesupport'
 gem 'foreman'
+gem 'turbot-runner', '0.1.18'
 
 group :test do
   gem 'cucumber'
