@@ -1,5 +1,7 @@
 require File.join(File.dirname(__FILE__), 'lib/chas.rb')
-import File.join(File.dirname(__FILE__), 'lib/tasks/docker.rake')
+require 'resque/tasks'
+
+Dir.glob('lib/tasks/*.rake').each { |r| import r }
 
 unless ENV['RACK_ENV'] == 'production'
   require 'rspec/core/rake_task'
