@@ -10,6 +10,7 @@ gem 'dotenv'
 gem 'docker-api'
 gem 'git'
 gem 'activesupport'
+gem 'foreman'
 
 group :test do
   gem 'cucumber'
