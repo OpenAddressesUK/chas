@@ -176,7 +176,7 @@ class TurbotDockerRunner
 
   def create_container
     LOG.info('Creating container')
-    conn = Docker::Connection.new(Docker.default_socket_url, read_timeout: 24.hours)
+    conn = Docker::Connection.new(docker_url, read_timeout: 24.hours)
     container_params = {
       'name' => "#{@bot_name}_#{@run_uid}",
       'Cmd' => ['/bin/bash', '-l', '-c', command],
