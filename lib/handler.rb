@@ -50,6 +50,6 @@ class Handler < TurbotRunner::BaseHandler
   end
 
   def queue
-    ironmq.queue("turbot_addresses")
+    iron_mq.queue("turbot_addresses")
   end
 end
