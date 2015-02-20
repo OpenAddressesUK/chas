@@ -1,4 +1,5 @@
 require 'turbot_runner'
+require 'iron_mq'
 
 class Handler < TurbotRunner::BaseHandler
   attr_reader :ended
