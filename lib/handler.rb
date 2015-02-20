@@ -20,6 +20,7 @@ class Handler < TurbotRunner::BaseHandler
       :identifying_fields => identifying_fields_for(data_type)
     }
     #Hutch.publish('bot.record', message)
+    queue.post(message.to_json)
   end
 
   def handle_run_ended
@@ -29,6 +30,7 @@ class Handler < TurbotRunner::BaseHandler
       :bot_name => @bot_name
     }
     #Hutch.publish('bot.record', message)
+    queue.post(message.to_json)
     @ended = true
   end
 
@@ -40,5 +42,13 @@ class Handler < TurbotRunner::BaseHandler
       raise "Expected to find precisely 1 matching transformer matching #{data_type} in #{@config}" unless transformers.size == 1
       transformers[0]['identifying_fields']
     end
+  end
+
+  def iron_mq
+    @@ironmq ||= IronMQ::Client.new(token: ENV['IRON_MQ_TOKEN'], project_id: ENV['IRON_MQ_PROJECT_ID'], host: 'mq-aws-eu-west-1.iron.io')
+  end
+
+  def self.queue
+    ironmq.queue("turbot_addresses")
   end
 end

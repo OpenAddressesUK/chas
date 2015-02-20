@@ -13,6 +13,7 @@ gem 'activesupport'
 gem 'foreman'
 gem 'turbot-runner', '0.1.18'
 gem 'rest-client'
+gem 'iron_mq'
 
 group :test do
   gem 'cucumber'
