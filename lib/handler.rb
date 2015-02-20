@@ -49,7 +49,7 @@ class Handler < TurbotRunner::BaseHandler
     @@ironmq ||= IronMQ::Client.new(token: ENV['IRON_MQ_TOKEN'], project_id: ENV['IRON_MQ_PROJECT_ID'], host: 'mq-aws-eu-west-1.iron.io')
   end
 
-  def self.queue
+  def queue
     ironmq.queue("turbot_addresses")
   end
 end
