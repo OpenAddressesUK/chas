@@ -218,7 +218,10 @@ class TurbotDockerRunner
   end
 
   def image
-    "opencorporates/morph-#{language}"
+    {
+      "python" => "opencorporates/morph-python",
+      "ruby" => "openaddresses/morph-ruby",
+    }[language]
   end
 
   def language

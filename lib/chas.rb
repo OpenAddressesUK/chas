@@ -23,6 +23,10 @@ class Chas < Sinatra::Base
     end
   end
 
+  get '/' do
+    redirect to 'https://camo.githubusercontent.com/961a4df8f9b282c1dc394e3462ef9dbde97b249e/687474703a2f2f6d656469612e66697265626f782e636f6d2f7069632f70323138365f73383031355f6d61696e2e6a7067', 301
+  end
+
   post '/runs', check: :valid_key? do
     Resque.enqueue(TurbotDockerRunner, params)
   end
