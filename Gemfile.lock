@@ -1,3 +1,16 @@
+GIT
+  remote: git://github.com/OpenAddressesUK/openc-schema.git
+  revision: 2eda5ac598e1ca3441172f64e67caaac01ce618d
+  specs:
+    openc-schema (0.0.1)
+
+GIT
+  remote: git://github.com/OpenAddressesUK/turbot-runner.git
+  revision: 6f783b8d39d35682575b028b693a1bff1c339416
+  specs:
+    turbot-runner (0.1.27)
+      openc-json_schema (= 0.0.5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -7,6 +20,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
+    addressable (2.3.7)
     archive-tar-minitar (0.5.2)
     builder (3.2.2)
     capybara (2.4.4)
@@ -70,7 +84,8 @@ GEM
     hitimes (1.2.2)
     i18n (0.7.0)
     json (1.8.2)
-    json-schema (2.2.2)
+    json-schema (2.5.0)
+      addressable (~> 2.3)
     jsonpath (0.5.6)
       multi_json
     listen (2.8.5)
@@ -92,6 +107,7 @@ GEM
     notiffany (0.0.5)
       nenv (~> 0.1)
       shellany (~> 0.0)
+    openc-json_schema (0.0.5)
     pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -153,8 +169,6 @@ GEM
     timers (4.0.1)
       hitimes
     tins (1.3.3)
-    turbot-runner (0.1.18)
-      json-schema (= 2.2.2)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     vegas (0.1.11)
@@ -176,6 +190,8 @@ DEPENDENCIES
   foreman
   git
   guard-cucumber
+  json-schema
+  openc-schema!
   pry
   rake
   resque
@@ -185,4 +201,4 @@ DEPENDENCIES
   rspec-mocks
   sinatra
   thin
-  turbot-runner (= 0.1.18)
+  turbot-runner!
