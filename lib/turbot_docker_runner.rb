@@ -25,6 +25,10 @@ class TurbotDockerRunner
     runner.run
   end
 
+  def env
+    @params['env']
+  end
+
   def initialize(params)
     params = params.with_indifferent_access
 
