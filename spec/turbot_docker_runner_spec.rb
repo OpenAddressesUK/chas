@@ -43,7 +43,7 @@ describe TurbotDockerRunner do
       'Image' => "opencorporates/morph-ruby",
       'Privileged' => true,
       'Memory' => 1.gigabyte,
-      'Env' => ["RUN_TYPE=draft", "MORPH_URL=http://localhost"],
+      'Env' => ["RUN_TYPE=draft", "MORPH_URL=http://localhost", "FOO=bar"],
     }
     expect(Docker::Container).to receive(:create).with(container_params, Docker::Connection)
     @runner.create_container
