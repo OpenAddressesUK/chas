@@ -25,6 +25,16 @@ class TurbotDockerRunner
     runner.run
   end
 
+  def env
+    @params['env'] || {}
+  end
+  
+  def env_array
+    env.map do |x|
+      "#{x[0]}=#{x[1]}"
+    end
+  end
+
   def initialize(params)
     params = params.with_indifferent_access
 
@@ -180,7 +190,7 @@ class TurbotDockerRunner
       'Memory' => 1.gigabyte,
       # MORPH_URL is used by Turbotlib to determine whether a scraper is
       # running in production.
-      'Env' => ["RUN_TYPE=#{@run_type}", "MORPH_URL=#{ENV['MORPH_URL']}"],
+      'Env' => ["RUN_TYPE=#{@run_type}", "MORPH_URL=#{ENV['MORPH_URL']}"].concat(env_array),
     }
     LOG.info("Creating container with params #{container_params}")
     Docker::Container.create(container_params, conn)

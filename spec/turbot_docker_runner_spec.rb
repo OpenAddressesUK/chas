@@ -8,7 +8,8 @@ describe TurbotDockerRunner do
       "run_id"=>"draft",
       "run_uid"=>"531",
       "run_type"=>"draft",
-      "user_api_key"=>"d95542ef0af45a507af73798"
+      "user_api_key"=>"d95542ef0af45a507af73798",
+      "env" => {'FOO' => 'bar'}
     }
     @runner = TurbotDockerRunner.new(@params)
   end
@@ -24,8 +25,12 @@ describe TurbotDockerRunner do
     expect(@runner.downloads_path).to eq('/tmp/data/downloads/m/miss-piggy/531/d95542ef0af45a507af73798')
   end
 
+  it "has correct env" do
+    expect(@runner.env['FOO']).to eq 'bar'
+  end
+
   it "clones the repo" do
-    expect(Git).to receive(:clone).with("git@github.com:oa-bots/miss-piggy.git", '/tmp/data/repo/m/miss-piggy')
+    expect(Git).to receive(:clone).with("https://github.com/oa-bots/miss-piggy", '/tmp/data/repo/m/miss-piggy')
     @runner.synchronise_repo
   end
 
@@ -38,7 +43,7 @@ describe TurbotDockerRunner do
       'Image' => "opencorporates/morph-ruby",
       'Privileged' => true,
       'Memory' => 1.gigabyte,
-      'Env' => ["RUN_TYPE=draft", "MORPH_URL=http://localhost"],
+      'Env' => ["RUN_TYPE=draft", "MORPH_URL=http://localhost", "FOO=bar"],
     }
     expect(Docker::Container).to receive(:create).with(container_params, Docker::Connection)
     @runner.create_container
