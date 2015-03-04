@@ -40,7 +40,7 @@ describe TurbotDockerRunner do
       'name' => "miss-piggy_531",
       'Cmd' => ['/bin/bash', '-l', '-c', '/usr/bin/time -v -o /output/time.out ruby /utils/wrapper.rb'],
       'User' => 'scraper',
-      'Image' => "opencorporates/morph-ruby",
+      'Image' => "openaddresses/morph-ruby",
       'Privileged' => true,
       'Memory' => 1.gigabyte,
       'Env' => ["RUN_TYPE=draft", "MORPH_URL=http://localhost", "FOO=bar"],

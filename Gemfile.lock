@@ -1,12 +1,12 @@
 GIT
   remote: git://github.com/OpenAddressesUK/openc-schema.git
-  revision: 2eda5ac598e1ca3441172f64e67caaac01ce618d
+  revision: 5fceb091cc0ae555163f315ff394e387f5e50e4f
   specs:
     openc-schema (0.0.1)
 
 GIT
   remote: git://github.com/OpenAddressesUK/turbot-runner.git
-  revision: 5fd516a6e4b832064c34066dc11e3340d2872d28
+  revision: 42e7dca653bf29e5bf1de5bd4c9499d1e4fe86cc
   specs:
     turbot-runner (0.1.27)
       openc-json_schema (= 0.0.5)
@@ -14,12 +14,13 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.1.9)
-      i18n (~> 0.6, >= 0.6.9)
+    activesupport (4.2.0)
+      i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
-      thread_safe (~> 0.1)
+      thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    addressable (2.3.7)
     archive-tar-minitar (0.5.2)
     builder (3.2.2)
     capybara (2.4.4)
@@ -87,7 +88,8 @@ GEM
     iron_mq (5.0.1)
       iron_core (>= 0.5.1)
     json (1.8.2)
-    json-schema (2.2.2)
+    json-schema (2.5.1)
+      addressable (~> 2.3.7)
     jsonpath (0.5.6)
       multi_json
     listen (2.8.5)
@@ -100,7 +102,7 @@ GEM
     mini_portile (0.6.2)
     minitest (5.5.1)
     mono_logger (1.1.0)
-    multi_json (1.10.1)
+    multi_json (1.11.0)
     multi_test (0.1.2)
     nenv (0.2.0)
     net-http-persistent (2.9.4)

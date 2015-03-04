@@ -3,7 +3,7 @@ $:.unshift File.join( File.dirname(__FILE__) )
 require 'json'
 require 'docker'
 require 'git'
-require 'active_support/core_ext'
+require 'active_support/all'
 require 'dotenv'
 require 'logger'
 require 'handler'
