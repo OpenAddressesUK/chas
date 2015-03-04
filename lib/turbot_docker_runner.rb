@@ -12,6 +12,7 @@ require 'rest-client'
 Dotenv.load
 
 class TurbotDockerRunner
+  attr_reader :last_run_at
 
   @queue = :turbot_docker_runs
 
@@ -28,7 +29,7 @@ class TurbotDockerRunner
   def env
     @params['env'] || {}
   end
-  
+
   def env_array
     env.map do |x|
       "#{x[0]}=#{x[1]}"
@@ -50,6 +51,7 @@ class TurbotDockerRunner
 
     @run_uid = params[:run_uid]
     @run_type = params[:run_type]
+    @last_run_at = params[:last_run_at]
     @user_api_key = params[:user_api_key]
 
     @run_ended = false
@@ -190,7 +192,7 @@ class TurbotDockerRunner
       'Memory' => 1.gigabyte,
       # MORPH_URL is used by Turbotlib to determine whether a scraper is
       # running in production.
-      'Env' => ["RUN_TYPE=#{@run_type}", "MORPH_URL=#{ENV['MORPH_URL']}"].concat(env_array),
+      'Env' => ["RUN_TYPE=#{@run_type}", "MORPH_URL=#{ENV['MORPH_URL']}", "LAST_RUN_AT='#{@last_run_at}'"].concat(env_array)
     }
     LOG.info("Creating container with params #{container_params}")
     Docker::Container.create(container_params, conn)
