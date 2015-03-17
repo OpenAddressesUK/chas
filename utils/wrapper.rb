@@ -1,4 +1,5 @@
 require 'turbot_runner'
+require 'iron_mq'
 
 # Flush output immediately
 STDOUT.sync = true
@@ -14,12 +15,12 @@ class Handler < TurbotRunner::BaseHandler
 
   def handle_valid_record(record, data_type)
     if data_type == 'primary data'
-      if ENV['RUN_TYPE'] == "draft" && @count > MAX_DRAFT_ROWS
-        raise TurbotRunner::InterruptRun
+      if ENV['RUN_TYPE'] == "draft"
+        raise TurbotRunner::InterruptRun if @count > MAX_DRAFT_ROWS
       else
-        @count += 1
+        queue.post(message.to_json)
       end
-
+      @count += 1
       STDOUT.puts "#{Time.now} :: Handled #{@count} records" if @count % 1000 == 0
     end
   end
@@ -37,6 +38,15 @@ class Handler < TurbotRunner::BaseHandler
     STDERR.puts "The following line is invalid JSON:"
     STDERR.puts line
   end
+  
+  def iron_mq
+    @@ironmq ||= IronMQ::Client.new(token: ENV['IRON_MQ_TOKEN'], project_id: ENV['IRON_MQ_PROJECT_ID'], host: 'mq-aws-eu-west-1.iron.io')
+  end
+
+  def queue
+    iron_mq.queue("turbot_test")
+  end
+
 end
 
 runner = TurbotRunner::Runner.new(
