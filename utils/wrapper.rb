@@ -8,8 +8,11 @@ STDERR.sync = true
 MAX_DRAFT_ROWS = 2000
 
 class Handler < TurbotRunner::BaseHandler
-  def initialize
+  def initialize(bot_name, run_id)
     super
+    @bot_name = bot_name
+    @run_id = run_id
+    @ended = false
     @count = 0
   end
 
@@ -18,6 +21,14 @@ class Handler < TurbotRunner::BaseHandler
       if ENV['RUN_TYPE'] == "draft"
         raise TurbotRunner::InterruptRun if @count > MAX_DRAFT_ROWS
       else
+        message = {
+          :type => 'bot.record',
+          :bot_name => @bot_name,
+          :snapshot_id => @run_id,
+          :data => record,
+          :data_type => data_type,
+          :identifying_fields => identifying_fields_for(data_type)
+        }
         queue.post(message.to_json)
       end
       @count += 1
@@ -39,6 +50,20 @@ class Handler < TurbotRunner::BaseHandler
     STDERR.puts line
   end
   
+  def handle_run_ended
+    message = {
+      :type => 'run.ended',
+      :snapshot_id => @run_id,
+      :bot_name => @bot_name
+    }
+    queue.post(message.to_json)
+    @ended = true
+  end
+  
+  def identifying_fields_for(data_type)
+    nil
+  end
+
   def iron_mq
     @@ironmq ||= IronMQ::Client.new(token: ENV['IRON_MQ_TOKEN'], project_id: ENV['IRON_MQ_PROJECT_ID'], host: 'mq-aws-eu-west-1.iron.io')
   end
@@ -52,7 +77,7 @@ end
 runner = TurbotRunner::Runner.new(
   '/repo',
   :log_to_file => true,
-  :record_handler => Handler.new,
+  :record_handler => Handler.new(ENV['BOT_NAME'], ENV['RUN_ID']),
   :output_directory => '/output'
 )
 
