@@ -71,7 +71,6 @@ class TurbotDockerRunner
 
     if !config['incremental'] && !config['manually_end_run'] # the former is legacy
       @run_ended = true
-      #   send_run_ended_to_angler
     end
 
     report_run_ended(status_code, metrics)
@@ -102,11 +101,11 @@ class TurbotDockerRunner
     @stderr_file.close if (@stderr_file && !@stderr_file.closed?)
   end
 
-  def connect_to_rabbitmq
-    return if Hutch.connected?
-    LOG.info('Connecting to RabbitMQ')
-    Hutch.connect({}, HutchConfig)
-  end
+###  def connect_to_rabbitmq
+###    return if Hutch.connected?
+###    LOG.info('Connecting to RabbitMQ')
+###    Hutch.connect({}, HutchConfig)
+###  end
 
   def set_up_directory(path)
     LOG.info("Setting up #{path}")
@@ -160,8 +159,6 @@ class TurbotDockerRunner
       end
 
     rescue Exception => e
-      require 'pry'
-      binding.pry
       log_exception_and_notify_airbrake(e)
       begin
         container.kill
@@ -244,14 +241,14 @@ class TurbotDockerRunner
     end
   end
 
-  def send_run_ended_to_angler
-    message = {
-      :type => 'run.ended',
-      :bot_name => @bot_name,
-      :snapshot_id => @run_id
-    }
-    Hutch.publish('bot.record', message)
-  end
+###  def send_run_ended_to_angler
+###    message = {
+###      :type => 'run.ended',
+###      :bot_name => @bot_name,
+###      :snapshot_id => @run_id
+###    }
+###    Hutch.publish('bot.record', message)
+###  end
 
   def read_metrics
     metrics = {}
