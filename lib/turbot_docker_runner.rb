@@ -27,7 +27,11 @@ class TurbotDockerRunner
   end
 
   def env
-    @params['env'] || {}
+    if @params['env'] && @params['env'] != ""
+      @params['env']
+    else
+      {}
+    end
   end
 
   def env_array
@@ -192,7 +196,15 @@ class TurbotDockerRunner
       'Memory' => 1.gigabyte,
       # MORPH_URL is used by Turbotlib to determine whether a scraper is
       # running in production.
-      'Env' => ["BOT_NAME=#{@bot_name}", "RUN_ID=#{@run_uid}", "RUN_TYPE=#{@run_type}", "MORPH_URL=#{ENV['MORPH_URL']}", "LAST_RUN_AT='#{@last_run_at}'", "IRON_MQ_TOKEN=#{ENV['IRON_MQ_TOKEN']}", "IRON_MQ_PROJECT_ID=#{ENV['IRON_MQ_PROJECT_ID']}"].concat(env_array)
+      'Env' => [
+        "BOT_NAME=#{@bot_name}", 
+        "RUN_ID=#{@run_uid}", 
+        "RUN_TYPE=#{@run_type}", 
+        "MORPH_URL=#{ENV['MORPH_URL']}", 
+        "LAST_RUN_AT='#{@last_run_at}'", 
+        "IRON_MQ_TOKEN=#{ENV['IRON_MQ_TOKEN']}", 
+        "IRON_MQ_PROJECT_ID=#{ENV['IRON_MQ_PROJECT_ID']}"
+      ].concat(env_array)
     }
     LOG.info("Creating container with params #{container_params}")
     Docker::Container.create(container_params, conn)
