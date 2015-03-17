@@ -276,7 +276,9 @@ class TurbotDockerRunner
     num_records = 0
 
     begin
-      File.readlines(File.join(output_path, 'scraper.out')).each {|line| num_records += 1}
+      # http://stackoverflow.com/questions/2650517/count-the-number-of-lines-in-a-file-without-reading-entire-file-into-memory
+      filename = File.join(output_path, 'scraper.out')
+      num_records = %x{wc -l #{filename}}.to_i
     rescue Errno::ENOENT
     end
 
