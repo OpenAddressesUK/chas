@@ -21,7 +21,7 @@ class Handler < TurbotRunner::BaseHandler
       :identifying_fields => identifying_fields_for(data_type)
     }
     #Hutch.publish('bot.record', message)
-    queue.post(message.to_json)
+    #queue.post(message.to_json)
   end
 
   def handle_run_ended
@@ -31,7 +31,7 @@ class Handler < TurbotRunner::BaseHandler
       :bot_name => @bot_name
     }
     #Hutch.publish('bot.record', message)
-    queue.post(message.to_json)
+    #queue.post(message.to_json)
     @ended = true
   end
 
@@ -46,10 +46,10 @@ class Handler < TurbotRunner::BaseHandler
   end
 
   def iron_mq
-    @@ironmq ||= IronMQ::Client.new(token: ENV['IRON_MQ_TOKEN'], project_id: ENV['IRON_MQ_PROJECT_ID'], host: 'mq-aws-eu-west-1.iron.io')
+    #@@ironmq ||= IronMQ::Client.new(token: ENV['IRON_MQ_TOKEN'], project_id: ENV['IRON_MQ_PROJECT_ID'], host: 'mq-aws-eu-west-1.iron.io')
   end
 
   def queue
-    iron_mq.queue("turbot_addresses")
+    #iron_mq.queue("turbot_addresses")
   end
 end
