@@ -26,8 +26,8 @@ class Handler < TurbotRunner::BaseHandler
           :bot_name => @bot_name,
           :snapshot_id => @run_id,
           :data => record,
-          :data_type => data_type,
-          :identifying_fields => identifying_fields_for(data_type)
+          :data_type => 'address',
+          :identifying_fields => identifying_fields_for('address')
         }
         queue.post(message.to_json)
       end
