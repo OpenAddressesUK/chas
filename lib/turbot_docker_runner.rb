@@ -6,7 +6,7 @@ require 'git'
 require 'active_support/all'
 require 'dotenv'
 require 'logger'
-require 'handler'
+#require 'handler'
 require 'rest-client'
 
 Dotenv.load
@@ -64,8 +64,6 @@ class TurbotDockerRunner
   def run
     set_up
     status_code = run_in_container
-
-    process_output
 
     symlink_output
 
@@ -197,29 +195,17 @@ class TurbotDockerRunner
       # MORPH_URL is used by Turbotlib to determine whether a scraper is
       # running in production.
       'Env' => [
-        "BOT_NAME=#{@bot_name}", 
-        "RUN_ID=#{@run_uid}", 
-        "RUN_TYPE=#{@run_type}", 
-        "MORPH_URL=#{ENV['MORPH_URL']}", 
-        "LAST_RUN_AT='#{@last_run_at}'", 
-        "IRON_MQ_TOKEN=#{ENV['IRON_MQ_TOKEN']}", 
+        "BOT_NAME=#{@bot_name}",
+        "RUN_ID=#{@run_uid}",
+        "RUN_TYPE=#{@run_type}",
+        "MORPH_URL=#{ENV['MORPH_URL']}",
+        "LAST_RUN_AT='#{@last_run_at}'",
+        "IRON_MQ_TOKEN=#{ENV['IRON_MQ_TOKEN']}",
         "IRON_MQ_PROJECT_ID=#{ENV['IRON_MQ_PROJECT_ID']}"
       ].concat(env_array)
     }
     LOG.info("Creating container with params #{container_params}")
     Docker::Container.create(container_params, conn)
-  end
-
-  def process_output
-    LOG.info('Processing output')
-    handler = Handler.new(@bot_name, config, @run_id)
-    runner = TurbotRunner::Runner.new(
-    repo_path,
-    :record_handler => handler,
-    :output_directory => output_path
-    )
-    runner.process_output
-    @run_ended = handler.ended
   end
 
   def symlink_output
