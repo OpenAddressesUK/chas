@@ -48,7 +48,16 @@ describe TurbotDockerRunner do
       'Image' => "openaddresses/morph-ruby",
       'Privileged' => true,
       'Memory' => 1.gigabyte,
-      'Env' => ["RUN_TYPE=draft", "MORPH_URL=http://localhost", "LAST_RUN_AT='1970-01-01T00:00:00 +0000'", "FOO=bar" ]
+      'Env' => [
+        "BOT_NAME=miss-piggy",
+        "RUN_ID=531",
+        "RUN_TYPE=draft",
+        "MORPH_URL=http://localhost",
+        "LAST_RUN_AT='1970-01-01T00:00:00 +0000'",
+        "IRON_MQ_TOKEN=",
+        "IRON_MQ_PROJECT_ID=",
+        "FOO=bar"
+        ]
     }
     expect(Docker::Container).to receive(:create).with(container_params, Docker::Connection)
     @runner.create_container

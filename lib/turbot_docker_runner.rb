@@ -6,7 +6,6 @@ require 'git'
 require 'active_support/all'
 require 'dotenv'
 require 'logger'
-require 'handler'
 require 'rest-client'
 
 Dotenv.load
@@ -65,15 +64,12 @@ class TurbotDockerRunner
     set_up
     status_code = run_in_container
 
-    process_output
-
     symlink_output
 
     metrics = read_metrics
 
     if !config['incremental'] && !config['manually_end_run'] # the former is legacy
       @run_ended = true
-      #   send_run_ended_to_angler
     end
 
     report_run_ended(status_code, metrics)
@@ -104,11 +100,11 @@ class TurbotDockerRunner
     @stderr_file.close if (@stderr_file && !@stderr_file.closed?)
   end
 
-  def connect_to_rabbitmq
-    return if Hutch.connected?
-    LOG.info('Connecting to RabbitMQ')
-    Hutch.connect({}, HutchConfig)
-  end
+###  def connect_to_rabbitmq
+###    return if Hutch.connected?
+###    LOG.info('Connecting to RabbitMQ')
+###    Hutch.connect({}, HutchConfig)
+###  end
 
   def set_up_directory(path)
     LOG.info("Setting up #{path}")
@@ -162,8 +158,6 @@ class TurbotDockerRunner
       end
 
     rescue Exception => e
-      require 'pry'
-      binding.pry
       log_exception_and_notify_airbrake(e)
       begin
         container.kill
@@ -197,29 +191,17 @@ class TurbotDockerRunner
       # MORPH_URL is used by Turbotlib to determine whether a scraper is
       # running in production.
       'Env' => [
-        "BOT_NAME=#{@bot_name}", 
-        "RUN_ID=#{@run_uid}", 
-        "RUN_TYPE=#{@run_type}", 
-        "MORPH_URL=#{ENV['MORPH_URL']}", 
-        "LAST_RUN_AT='#{@last_run_at}'", 
-        "IRON_MQ_TOKEN=#{ENV['IRON_MQ_TOKEN']}", 
+        "BOT_NAME=#{@bot_name}",
+        "RUN_ID=#{@run_uid}",
+        "RUN_TYPE=#{@run_type}",
+        "MORPH_URL=#{ENV['MORPH_URL']}",
+        "LAST_RUN_AT='#{@last_run_at}'",
+        "IRON_MQ_TOKEN=#{ENV['IRON_MQ_TOKEN']}",
         "IRON_MQ_PROJECT_ID=#{ENV['IRON_MQ_PROJECT_ID']}"
       ].concat(env_array)
     }
     LOG.info("Creating container with params #{container_params}")
     Docker::Container.create(container_params, conn)
-  end
-
-  def process_output
-    LOG.info('Processing output')
-    handler = Handler.new(@bot_name, config, @run_id)
-    runner = TurbotRunner::Runner.new(
-    repo_path,
-    :record_handler => handler,
-    :output_directory => output_path
-    )
-    runner.process_output
-    @run_ended = handler.ended
   end
 
   def symlink_output
@@ -258,14 +240,14 @@ class TurbotDockerRunner
     end
   end
 
-  def send_run_ended_to_angler
-    message = {
-      :type => 'run.ended',
-      :bot_name => @bot_name,
-      :snapshot_id => @run_id
-    }
-    Hutch.publish('bot.record', message)
-  end
+###  def send_run_ended_to_angler
+###    message = {
+###      :type => 'run.ended',
+###      :bot_name => @bot_name,
+###      :snapshot_id => @run_id
+###    }
+###    Hutch.publish('bot.record', message)
+###  end
 
   def read_metrics
     metrics = {}
@@ -290,7 +272,9 @@ class TurbotDockerRunner
     num_records = 0
 
     begin
-      File.readlines(File.join(output_path, 'scraper.out')).each {|line| num_records += 1}
+      # http://stackoverflow.com/questions/2650517/count-the-number-of-lines-in-a-file-without-reading-entire-file-into-memory
+      filename = File.join(output_path, 'scraper.out')
+      num_records = %x{wc -l #{filename}}.to_i
     rescue Errno::ENOENT
     end
 
