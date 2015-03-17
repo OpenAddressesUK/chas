@@ -6,7 +6,6 @@ require 'git'
 require 'active_support/all'
 require 'dotenv'
 require 'logger'
-#require 'handler'
 require 'rest-client'
 
 Dotenv.load
