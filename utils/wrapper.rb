@@ -17,23 +17,21 @@ class Handler < TurbotRunner::BaseHandler
   end
 
   def handle_valid_record(record, data_type)
-    if data_type == 'primary data'
-      if ENV['RUN_TYPE'] == "draft"
-        raise TurbotRunner::InterruptRun if @count > MAX_DRAFT_ROWS
-      else
-        message = {
-          :type => 'bot.record',
-          :bot_name => @bot_name,
-          :snapshot_id => @run_id,
-          :data => record,
-          :data_type => 'address',
-          :identifying_fields => identifying_fields_for('address')
-        }
-        queue.post(message.to_json)
-      end
-      @count += 1
-      STDOUT.puts "#{Time.now} :: Handled #{@count} records" if @count % 1000 == 0
+    if ENV['RUN_TYPE'] == "draft"
+      raise TurbotRunner::InterruptRun if @count > MAX_DRAFT_ROWS
+    else
+      message = {
+        :type => 'bot.record',
+        :bot_name => @bot_name,
+        :snapshot_id => @run_id,
+        :data => record,
+        :data_type => 'address',
+        :identifying_fields => identifying_fields_for('address')
+      }
+      queue.post(message.to_json)
     end
+    @count += 1
+    STDOUT.puts "#{Time.now} :: Handled #{@count} records" if @count % 1000 == 0
   end
 
   def handle_invalid_record(record, data_type, error_message)
