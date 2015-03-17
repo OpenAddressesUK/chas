@@ -9,7 +9,7 @@ MAX_DRAFT_ROWS = 2000
 
 class Handler < TurbotRunner::BaseHandler
   def initialize(bot_name, run_id)
-    super
+    super()
     @bot_name = bot_name
     @run_id = run_id
     @ended = false
