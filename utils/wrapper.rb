@@ -5,7 +5,7 @@ require 'iron_mq'
 STDOUT.sync = true
 STDERR.sync = true
 
-MAX_DRAFT_ROWS = 2000
+MAX_DRAFT_ROWS = 200
 
 class Handler < TurbotRunner::BaseHandler
   def initialize(bot_name, run_id)
