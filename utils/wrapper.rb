@@ -31,7 +31,7 @@ class Handler < TurbotRunner::BaseHandler
       queue.post(message.to_json)
     end
     @count += 1
-    STDOUT.puts "#{Time.now} :: Handled #{@count} records" if @count % 1000 == 0
+    STDOUT.puts "#{Time.now} :: Handled #{@count} records" if @count % 100 == 0
   end
 
   def handle_invalid_record(record, data_type, error_message)
