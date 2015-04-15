@@ -34,6 +34,19 @@ class Handler < TurbotRunner::BaseHandler
     STDOUT.puts "#{Time.now} :: Handled #{@count} records" if @count % 100 == 0
   end
 
+  def post_to_iron_mq(message)
+    tries ||= 5
+    queue.post(message.to_json)
+  rescue
+    if (tries -= 1) > 0
+      seconds = 5 * tries
+      STDERR.puts "Hit error, trying again in #{seconds} seconds"
+      retry
+    else
+      STDERR.puts "Giving up"
+    end
+  end
+
   def handle_invalid_record(record, data_type, error_message)
     STDERR.puts
     STDERR.puts "The following record is invalid:"
@@ -47,7 +60,7 @@ class Handler < TurbotRunner::BaseHandler
     STDERR.puts "The following line is invalid JSON:"
     STDERR.puts line
   end
-  
+
   def handle_run_ended
     message = {
       :type => 'run.ended',
@@ -57,7 +70,7 @@ class Handler < TurbotRunner::BaseHandler
     queue.post(message.to_json)
     @ended = true
   end
-  
+
   def identifying_fields_for(data_type)
     nil
   end
@@ -81,4 +94,3 @@ runner = TurbotRunner::Runner.new(
 
 rc = runner.run
 exit(rc)
- 
