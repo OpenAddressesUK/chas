@@ -41,6 +41,7 @@ class Handler < TurbotRunner::BaseHandler
     if (tries -= 1) > 0
       seconds = 5 * tries
       STDERR.puts "Hit error, trying again in #{seconds} seconds"
+      sleep seconds
       retry
     else
       STDERR.puts "Giving up"
