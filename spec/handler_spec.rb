@@ -1,8 +1,6 @@
 require 'spec_helper'
 require_relative '../utils/handler'
 
-ENV['IRON_MQ_TOKEN']='t0ken'
-ENV['IRON_MQ_PROJECT_ID'] = '012345678901234567890123'
 STDOUT.sync = true
 STDERR.sync = true
 
