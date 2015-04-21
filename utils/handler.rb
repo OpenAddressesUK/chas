@@ -41,9 +41,11 @@ class Handler < TurbotRunner::BaseHandler
   rescue
     if (tries += 1) < limit
       seconds = 5 * tries
+      $stderr.puts "Hit error, trying again in #{seconds} seconds"
       sleep seconds
       retry
     else
+      $stderr.puts "Giving up"
     end
   end
 
