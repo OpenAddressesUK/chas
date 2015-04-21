@@ -28,7 +28,7 @@ class Handler < TurbotRunner::BaseHandler
         :data_type => 'address',
         :identifying_fields => identifying_fields_for('address')
       }
-      queue.post(message.to_json)
+      post_to_iron_mq(message.to_json)
     end
     @count += 1
     STDOUT.puts "#{Time.now} :: Handled #{@count} records" if @count % 100 == 0
