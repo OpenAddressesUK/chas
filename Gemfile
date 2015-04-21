@@ -28,4 +28,5 @@ group :test do
   gem 'rspec-expectations'
   gem 'pry'
   gem 'coveralls'
+  gem 'webmock'
 end
