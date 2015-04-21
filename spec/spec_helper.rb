@@ -4,6 +4,7 @@ require 'coveralls'
 Coveralls.wear!
 
 require 'rspec'
+require 'webmock/rspec'
 require 'turbot_docker_runner'
 
 ENV['RACK_ENV'] = 'test'
