@@ -37,7 +37,7 @@ class Handler < TurbotRunner::BaseHandler
   def post_to_iron_mq(message)
     limit ||= 5
     tries ||= 0
-    queue.post(message.to_json)
+    queue.post(message)
   rescue
     if (tries += 1) < limit
       seconds = 5 * tries
