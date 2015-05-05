@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/OpenAddressesUK/openc-schema.git
-  revision: 5fceb091cc0ae555163f315ff394e387f5e50e4f
+  revision: 5100f87c999856a43041ee49860929efb2547a69
   specs:
     openc-schema (0.0.1)
 
